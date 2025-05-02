@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FirestoreService } from '../../../core/services/firestore.service';
 
 @Component({
@@ -7,7 +7,7 @@ import { FirestoreService } from '../../../core/services/firestore.service';
   templateUrl: './location-stadistics.component.html',
   styleUrl: './location-stadistics.component.scss'
 })
-export class LocationStadisticsComponent {
+export class LocationStadisticsComponent implements OnInit {
   constructor(private firestoreService: FirestoreService) {}
 
   // Variables
@@ -15,14 +15,12 @@ export class LocationStadisticsComponent {
   states!: string[];
 
   ngOnInit(): void {
-    this.firestoreService.countries$.subscribe(values => {
-      this.countries = values;
-      console.log('countries:', values);
+    this.firestoreService.countries$.subscribe(countries => {
+      this.countries = countries;
     });
 
-    this.firestoreService.states$.subscribe(values => {
-      this.states = values;
-      console.log('states:', values);
+    this.firestoreService.states$.subscribe(states => {
+      this.states = states;
     });
   }
 }

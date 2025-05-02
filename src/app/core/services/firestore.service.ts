@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Firestore, collection, collectionData } from '@angular/fire/firestore';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { DateTime } from 'luxon';
 
 @Injectable({
   providedIn: 'root'
@@ -106,6 +105,25 @@ export class FirestoreService {
       .subscribe();
   }
 
+  private processSleepData(form: any) {
+    const sleepTime = form['sleep_time'] ? new Date(form['sleep_time'].seconds * 1000) : null;
+    const wakeUpTime = form['wake_up_time'] ? new Date(form['wake_up_time'].seconds * 1000) : null;
+    let sleepDuration = 0;
+  
+    if (sleepTime && wakeUpTime) {
+      sleepDuration = (wakeUpTime.getTime() - sleepTime.getTime()) / (1000 * 60 * 60);
+    }
+  
+    return { sleepTime, wakeUpTime, sleepDuration };
+  }
+
+  private processLocationData(form: any) {
+    const country = form['country'] || null;
+    const state = form['state'] || null;
+  
+    return { country, state };
+  }
+  
   public loadFormulariosCollection(): void {
     const ref = collection(this.firestore, 'formularios');
     collectionData(ref, { idField: 'id' }).pipe(
@@ -118,26 +136,41 @@ export class FirestoreService {
         const restLevels: number[] = [];
         const sleepTimes: Date[] = [];
         const wakeUpTimes: Date[] = [];
+        const countries: string[] = [];
+        const states: string[] = [];
   
         formularios.forEach(form => {
-          const sleepTime = form['sleep_time'] ? new Date(form['sleep_time'].seconds * 1000) : null;
-          const wakeUpTime = form['wake_up_time'] ? new Date(form['wake_up_time'].seconds * 1000) : null;
-          const restLevel = form['rest_level'] || 0;
+          // Procesamos los datos de sueño
+          const { sleepTime, wakeUpTime, sleepDuration } = this.processSleepData(form);
   
           if (sleepTime && wakeUpTime) {
-            const sleepDuration = (wakeUpTime.getTime() - sleepTime.getTime()) / (1000 * 60 * 60); // Duración en horas
             totalSleepDuration += sleepDuration;
           }
   
           if (sleepTime) totalSleepTime += sleepTime.getHours() * 60 + sleepTime.getMinutes();
           if (wakeUpTime) totalWakeUpTime += wakeUpTime.getHours() * 60 + wakeUpTime.getMinutes();
-          totalRestLevel += restLevel;
+          totalRestLevel += form['rest_level'] || 0;
   
           // Guardamos los valores para los gráficos
-          if (restLevel) restLevels.push(restLevel);
+          if (form['rest_level']) restLevels.push(form['rest_level']);
           if (sleepTime) sleepTimes.push(sleepTime);
           if (wakeUpTime) wakeUpTimes.push(wakeUpTime);
+  
+          // Procesamos los datos de ubicación (country y state)
+          const { country, state } = this.processLocationData(form);
+  
+          // Evitamos agregar valores duplicados
+          if (country && !countries.includes(country)) {
+            countries.push(country);
+          }
+          if (state && !states.includes(state)) {
+            states.push(state);
+          }
         });
+  
+        // Verificación con console.log para ver si los países y estados se llenan correctamente
+        console.log('Countries:', countries);
+        console.log('States:', states);
   
         return {
           totalForms: count,
@@ -147,7 +180,9 @@ export class FirestoreService {
           avgSleepDuration: totalSleepDuration / count,
           restLevels,
           sleepTimes,
-          wakeUpTimes
+          wakeUpTimes,
+          countries,
+          states
         };
       })
     ).subscribe(result => {
@@ -155,6 +190,8 @@ export class FirestoreService {
       this.restLevelsSubject.next(result.restLevels);
       this.sleepTimesSubject.next(result.sleepTimes);
       this.wakeUpTimesSubject.next(result.wakeUpTimes);
+      this.countriesSubject.next(result.countries);  // Emitimos los países
+      this.statesSubject.next(result.states);  // Emitimos los estados
   
       // Emitimos los otros valores a los Subjects de promedios
       this.totalFormsRecordsSubject.next(result.totalForms);
@@ -164,5 +201,6 @@ export class FirestoreService {
       this.avgSleepDurationSubject.next(result.avgSleepDuration);
     });
   }
+  
   
 }
