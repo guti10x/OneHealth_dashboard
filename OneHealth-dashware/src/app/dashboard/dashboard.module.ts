@@ -8,6 +8,8 @@ import { BiometricsComponent } from './components/biometrics/biometrics.componen
 import { HealthPredictionsComponent } from './components/health-predictions/health-predictions.component';
 import { AnxietyLevelsComponent } from './components/anxiety-levels/anxiety-levels.component';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { ModComponent } from './components/mod/mod.component';
+import { LocationStadisticsComponent } from './components/location-stadistics/location-stadistics.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +19,9 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
     AppUsageComponent,
     BiometricsComponent,
     HealthPredictionsComponent,
-    AnxietyLevelsComponent
+    AnxietyLevelsComponent,
+    ModComponent,
+    LocationStadisticsComponent
   ],
   imports: [
     CommonModule,

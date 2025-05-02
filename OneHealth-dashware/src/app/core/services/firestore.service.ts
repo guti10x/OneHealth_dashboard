@@ -11,11 +11,15 @@ export class FirestoreService {
 
   constructor(private firestore: Firestore) {}
 
+  // Header variables
   private totalUsersSubject = new BehaviorSubject<number>(0);
   private usersWithDeviceIdSubject = new BehaviorSubject<number>(0);
   private totalFormsRecordsSubject = new BehaviorSubject<number>(0);
-  private sleepStatsSubject = new BehaviorSubject<any>(null);
+  totalUsers$ = this.totalUsersSubject.asObservable();
+  usersWithDeviceId$ = this.usersWithDeviceIdSubject.asObservable();
+  totalFormsRecords$ = this.totalFormsRecordsSubject.asObservable();
 
+  // Sleep variables
   private averageRestLevelSubject = new BehaviorSubject<number>(0);
   private averageSleepTimeSubject = new BehaviorSubject<Date | null>(null);
   private averageWakeUpTimeSubject = new BehaviorSubject<Date | null>(null);
@@ -23,13 +27,6 @@ export class FirestoreService {
   restLevelsSubject = new BehaviorSubject<number[]>([]);
   sleepTimesSubject = new BehaviorSubject<Date[]>([]);
   wakeUpTimesSubject = new BehaviorSubject<Date[]>([]);
-  
-
-  totalUsers$ = this.totalUsersSubject.asObservable();
-  usersWithDeviceId$ = this.usersWithDeviceIdSubject.asObservable();
-  totalFormsRecords$ = this.totalFormsRecordsSubject.asObservable();
-  sleepStats$ = this.sleepStatsSubject.asObservable();
-
   averageRestLevel$ = this.averageRestLevelSubject.asObservable();
   averageSleepTime$ = this.averageSleepTimeSubject.asObservable();
   averageWakeUpTime$ = this.averageWakeUpTimeSubject.asObservable();
@@ -37,6 +34,62 @@ export class FirestoreService {
   restLevels$ = this.restLevelsSubject.asObservable();
   sleepTimes$ = this.sleepTimesSubject.asObservable();
   wakeUpTimes$ = this.wakeUpTimesSubject.asObservable();
+
+  // Mod variables
+  private sadnessLevelSubject = new BehaviorSubject<number>(0);
+  private maxAnxietyLevelSubject = new BehaviorSubject<number>(0);
+  private happinessLevelSubject = new BehaviorSubject<number>(0);
+  private avgEnergyLevelSubject = new BehaviorSubject<number>(0);
+  private avgAnxietyLevelSubject = new BehaviorSubject<number>(0);
+  private apathyLevelSubject = new BehaviorSubject<number>(0);
+  sadnessLevel$ = this.sadnessLevelSubject.asObservable();
+  maxAnxietyLevel$ = this.maxAnxietyLevelSubject.asObservable();
+  happinessLevel$ = this.happinessLevelSubject.asObservable();
+  avgEnergyLevel$ = this.avgEnergyLevelSubject.asObservable();
+  avgAnxietyLevel$ = this.avgAnxietyLevelSubject.asObservable();
+  apathyLevel$ = this.apathyLevelSubject.asObservable();
+  private sadnessLevelsSubject = new BehaviorSubject<number[]>([]);
+  private anxietyLevelsSubject = new BehaviorSubject<number[]>([]);
+  private happinessLevelsSubject = new BehaviorSubject<number[]>([]);
+  private energyLevelsSubject = new BehaviorSubject<number[]>([]);
+  private apathyLevelsSubject = new BehaviorSubject<number[]>([]);
+  sadnessLevels$ = this.sadnessLevelsSubject.asObservable();
+  anxietyLevels$ = this.anxietyLevelsSubject.asObservable();
+  happinessLevels$ = this.happinessLevelsSubject.asObservable();
+  energyLevels$ = this.energyLevelsSubject.asObservable();
+  apathyLevels$ = this.apathyLevelsSubject.asObservable();
+
+  // Mobile variables
+  private unlocksSubject = new BehaviorSubject<number>(0);
+  private tiktokTimeSubject = new BehaviorSubject<number>(0);
+  private screenTimeSubject = new BehaviorSubject<number>(0);
+  private instagramTimeSubject = new BehaviorSubject<number>(0);
+  private finalRankingSubject = new BehaviorSubject<string[]>([]);
+  unlocks$ = this.unlocksSubject.asObservable();
+  tiktokTime$ = this.tiktokTimeSubject.asObservable();
+  screenTime$ = this.screenTimeSubject.asObservable();
+  instagramTime$ = this.instagramTimeSubject.asObservable();
+  finalRanking$ = this.finalRankingSubject.asObservable();
+  private unlocksArraySubject = new BehaviorSubject<number[]>([]);
+  private tiktokTimesArraySubject = new BehaviorSubject<number[]>([]);
+  private screenTimesArraySubject = new BehaviorSubject<number[]>([]);
+  private instagramTimesArraySubject = new BehaviorSubject<number[]>([]);
+  private finalRankinsgArraySubject = new BehaviorSubject<string[]>([]);
+  unlocksArray$ = this.unlocksArraySubject.asObservable();
+  tiktokTimesArray$ = this.tiktokTimesArraySubject.asObservable();
+  screenTimesArray$ = this.screenTimesArraySubject.asObservable();
+  instagramTimesArray$ = this.instagramTimesArraySubject.asObservable();
+  finalRankingsArray$ = this.finalRankinsgArraySubject.asObservable();
+  
+  // location
+  private countriesSubject = new BehaviorSubject<string[]>([]);
+  private statesSubject = new BehaviorSubject<string[]>([]);
+  countries$ = this.countriesSubject.asObservable();
+  states$ = this.statesSubject.asObservable();
+
+  // Predictions
+
+  // Biometric data
 
   public loadUserCollection(): void {
     const ref = collection(this.firestore, 'users');
