@@ -131,26 +131,38 @@ export class FirestoreService {
         let totalWakeUpTime = 0;
         let totalSleepDuration = 0;
         let count = formularios.length;
+  
         const restLevels: number[] = [];
         const sleepTimes: Date[] = [];
         const wakeUpTimes: Date[] = [];
         const countries: string[] = [];
         const states: string[] = [];
   
-        // Acumuladores móviles
         let totalUnlocks = 0;
         let totalTiktokTime = 0;
         let totalScreenTime = 0;
         let totalInstagramTime = 0;
   
-        // Arrays móviles
         const unlocksArray: number[] = [];
         const tiktokTimesArray: number[] = [];
         const screenTimesArray: number[] = [];
         const instagramTimesArray: number[] = [];
   
-        // Contador de apps por posición (0, 1, 2)
         const positionCounts: Record<string, number[]> = {};
+  
+        // Nuevos acumuladores y arrays
+        let totalSadness = 0;
+        let totalAnxiety = 0;
+        let totalEnergy = 0;
+        let totalHappiness = 0;
+        let totalApathy = 0;
+        let maxAnxiety = 0;
+  
+        const sadnessLevels: number[] = [];
+        const anxietyLevels: number[] = [];
+        const happinessLevels: number[] = [];
+        const energyLevels: number[] = [];
+        const apathyLevels: number[] = [];
   
         formularios.forEach(form => {
           // Datos de sueño
@@ -164,7 +176,6 @@ export class FirestoreService {
           if (sleepTime) sleepTimes.push(sleepTime);
           if (wakeUpTime) wakeUpTimes.push(wakeUpTime);
   
-          // Ubicación
           const { country, state } = this.processLocationData(form);
           if (country && !countries.includes(country)) countries.push(country);
           if (state && !states.includes(state)) states.push(state);
@@ -185,20 +196,39 @@ export class FirestoreService {
           screenTimesArray.push(screenTime);
           instagramTimesArray.push(instagramTime);
   
-          // Procesar final_ranking
+          // Ranking
           const rankingString = form['final_ranking'] || '';
-          const apps: string[] = rankingString.split(',').map((app: string) => app.trim()).filter((app: string) => Boolean(app));
-          apps.forEach((app: string, index: number) => {
-            if (index <= 2) { // Solo contamos las posiciones 0, 1 y 2
-              if (!positionCounts[app]) {
-                positionCounts[app] = [0, 0, 0];
-              }
+            const apps: string[] = rankingString.split(',').map((app: string): string => app.trim()).filter((app: string): boolean => Boolean(app));
+          apps.forEach((app, index) => {
+            if (index <= 2) {
+              if (!positionCounts[app]) positionCounts[app] = [0, 0, 0];
               positionCounts[app][index]++;
             }
           });
+  
+          // Nuevos campos emocionales
+          const sadness = form['sadnessLevel'] || 0;
+          const maxAnxietyLevel = form['maxAnxietyLevel'] || 0;
+          const happiness = form['happinessLevel'] || 0;
+          const avgEnergy = form['avgEnergyLevel'] || 0;
+          const avgAnxiety = form['avgAnxietyLevel'] || 0;
+          const apathy = form['apathyLevel'] || 0;
+  
+          totalSadness += sadness;
+          totalAnxiety += avgAnxiety;
+          totalEnergy += avgEnergy;
+          totalHappiness += happiness;
+          totalApathy += apathy;
+  
+          if (maxAnxietyLevel > maxAnxiety) maxAnxiety = maxAnxietyLevel;
+  
+          sadnessLevels.push(sadness);
+          anxietyLevels.push(avgAnxiety);
+          happinessLevels.push(happiness);
+          energyLevels.push(avgEnergy);
+          apathyLevels.push(apathy);
         });
   
-        // Crear el ranking final basado en la posición
         const finalRankingArray = Object.entries(positionCounts)
           .map(([app, counts]) => ({
             app,
@@ -219,51 +249,69 @@ export class FirestoreService {
           wakeUpTimes,
           countries,
           states,
-  
           averageUnlocks: totalUnlocks / count,
           averageTiktokTime: totalTiktokTime / count,
           averageScreenTime: totalScreenTime / count,
           averageInstagramTime: totalInstagramTime / count,
-  
           unlocksArray,
           tiktokTimesArray,
           screenTimesArray,
           instagramTimesArray,
-  
-          finalRankingArray
+          finalRankingArray,
+          averageSadnessLevel: totalSadness / count,
+          maxAnxietyLevel: maxAnxiety,
+          averageHappinessLevel: totalHappiness / count,
+          averageEnergyLevel: totalEnergy / count,
+          averageAnxietyLevel: totalAnxiety / count,
+          averageApathyLevel: totalApathy / count,
+          sadnessLevels,
+          anxietyLevels,
+          happinessLevels,
+          energyLevels,
+          apathyLevels
         };
       })
     ).subscribe(result => {
-      // Emitimos arrays de sueño y localización
+      // Sueño y localización
       this.restLevelsSubject.next(result.restLevels);
       this.sleepTimesSubject.next(result.sleepTimes);
       this.wakeUpTimesSubject.next(result.wakeUpTimes);
       this.countriesSubject.next(result.countries);
       this.statesSubject.next(result.states);
   
-      // Emitimos promedios de sueño
       this.totalFormsRecordsSubject.next(result.totalForms);
       this.averageRestLevelSubject.next(result.averageRestLevel);
       this.averageSleepTimeSubject.next(new Date(result.averageSleepTime * 60000));
       this.averageWakeUpTimeSubject.next(new Date(result.averageWakeUpTime * 60000));
       this.avgSleepDurationSubject.next(result.avgSleepDuration);
   
-      // Emitimos datos móviles
+      // Datos móviles
       this.unlocksSubject.next(result.averageUnlocks);
       this.tiktokTimeSubject.next(result.averageTiktokTime);
       this.screenTimeSubject.next(result.averageScreenTime);
       this.instagramTimeSubject.next(result.averageInstagramTime);
-  
       this.unlocksArraySubject.next(result.unlocksArray);
       this.tiktokTimesArraySubject.next(result.tiktokTimesArray);
       this.screenTimesArraySubject.next(result.screenTimesArray);
       this.instagramTimesArraySubject.next(result.instagramTimesArray);
   
-      // Emitimos ranking final
+      // Ranking
       this.finalRankingSubject.next(result.finalRankingArray);
+  
+      // Datos emocionales
+      this.sadnessLevelSubject.next(result.averageSadnessLevel);
+      this.maxAnxietyLevelSubject.next(result.maxAnxietyLevel);
+      this.happinessLevelSubject.next(result.averageHappinessLevel);
+      this.avgEnergyLevelSubject.next(result.averageEnergyLevel);
+      this.avgAnxietyLevelSubject.next(result.averageAnxietyLevel);
+      this.apathyLevelSubject.next(result.averageApathyLevel);
+  
+      this.sadnessLevelsSubject.next(result.sadnessLevels);
+      this.anxietyLevelsSubject.next(result.anxietyLevels);
+      this.happinessLevelsSubject.next(result.happinessLevels);
+      this.energyLevelsSubject.next(result.energyLevels);
+      this.apathyLevelsSubject.next(result.apathyLevels);
     });
   }
-  
-  
-  
+ 
 }
