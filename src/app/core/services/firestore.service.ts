@@ -63,7 +63,7 @@ export class FirestoreService {
   private tiktokTimeSubject = new BehaviorSubject<number>(0);
   private screenTimeSubject = new BehaviorSubject<number>(0);
   private instagramTimeSubject = new BehaviorSubject<number>(0);
-  private finalRankingSubject = new BehaviorSubject<string[]>([]);
+  private finalRankingSubject = new BehaviorSubject<{ app: string, position0: number, position1: number, position2: number }[]>([]);
   unlocks$ = this.unlocksSubject.asObservable();
   tiktokTime$ = this.tiktokTimeSubject.asObservable();
   screenTime$ = this.screenTimeSubject.asObservable();
@@ -73,12 +73,10 @@ export class FirestoreService {
   private tiktokTimesArraySubject = new BehaviorSubject<number[]>([]);
   private screenTimesArraySubject = new BehaviorSubject<number[]>([]);
   private instagramTimesArraySubject = new BehaviorSubject<number[]>([]);
-  private finalRankinsgArraySubject = new BehaviorSubject<string[]>([]);
   unlocksArray$ = this.unlocksArraySubject.asObservable();
   tiktokTimesArray$ = this.tiktokTimesArraySubject.asObservable();
   screenTimesArray$ = this.screenTimesArraySubject.asObservable();
   instagramTimesArray$ = this.instagramTimesArraySubject.asObservable();
-  finalRankingsArray$ = this.finalRankinsgArraySubject.asObservable();
   
   // location
   private countriesSubject = new BehaviorSubject<string[]>([]);
@@ -139,38 +137,76 @@ export class FirestoreService {
         const countries: string[] = [];
         const states: string[] = [];
   
+        // Acumuladores móviles
+        let totalUnlocks = 0;
+        let totalTiktokTime = 0;
+        let totalScreenTime = 0;
+        let totalInstagramTime = 0;
+  
+        // Arrays móviles
+        const unlocksArray: number[] = [];
+        const tiktokTimesArray: number[] = [];
+        const screenTimesArray: number[] = [];
+        const instagramTimesArray: number[] = [];
+  
+        // Contador de apps por posición (0, 1, 2)
+        const positionCounts: Record<string, number[]> = {};
+  
         formularios.forEach(form => {
-          // Procesamos los datos de sueño
+          // Datos de sueño
           const { sleepTime, wakeUpTime, sleepDuration } = this.processSleepData(form);
-  
-          if (sleepTime && wakeUpTime) {
-            totalSleepDuration += sleepDuration;
-          }
-  
+          if (sleepTime && wakeUpTime) totalSleepDuration += sleepDuration;
           if (sleepTime) totalSleepTime += sleepTime.getHours() * 60 + sleepTime.getMinutes();
           if (wakeUpTime) totalWakeUpTime += wakeUpTime.getHours() * 60 + wakeUpTime.getMinutes();
           totalRestLevel += form['rest_level'] || 0;
   
-          // Guardamos los valores para los gráficos
           if (form['rest_level']) restLevels.push(form['rest_level']);
           if (sleepTime) sleepTimes.push(sleepTime);
           if (wakeUpTime) wakeUpTimes.push(wakeUpTime);
   
-          // Procesamos los datos de ubicación (country y state)
+          // Ubicación
           const { country, state } = this.processLocationData(form);
+          if (country && !countries.includes(country)) countries.push(country);
+          if (state && !states.includes(state)) states.push(state);
   
-          // Evitamos agregar valores duplicados
-          if (country && !countries.includes(country)) {
-            countries.push(country);
-          }
-          if (state && !states.includes(state)) {
-            states.push(state);
-          }
+          // Datos móviles
+          const unlocks = form['unlocks'] || 0;
+          const tiktokTime = form['tiktok_time'] || 0;
+          const screenTime = form['screen_time'] || 0;
+          const instagramTime = form['instagram_time'] || 0;
+  
+          totalUnlocks += unlocks;
+          totalTiktokTime += tiktokTime;
+          totalScreenTime += screenTime;
+          totalInstagramTime += instagramTime;
+  
+          unlocksArray.push(unlocks);
+          tiktokTimesArray.push(tiktokTime);
+          screenTimesArray.push(screenTime);
+          instagramTimesArray.push(instagramTime);
+  
+          // Procesar final_ranking
+          const rankingString = form['final_ranking'] || '';
+          const apps: string[] = rankingString.split(',').map((app: string) => app.trim()).filter((app: string) => Boolean(app));
+          apps.forEach((app: string, index: number) => {
+            if (index <= 2) { // Solo contamos las posiciones 0, 1 y 2
+              if (!positionCounts[app]) {
+                positionCounts[app] = [0, 0, 0];
+              }
+              positionCounts[app][index]++;
+            }
+          });
         });
   
-        // Verificación con console.log para ver si los países y estados se llenan correctamente
-        console.log('Countries:', countries);
-        console.log('States:', states);
+        // Crear el ranking final basado en la posición
+        const finalRankingArray = Object.entries(positionCounts)
+          .map(([app, counts]) => ({
+            app,
+            position0: counts[0],
+            position1: counts[1],
+            position2: counts[2]
+          }))
+          .sort((a, b) => (b.position0 + b.position1 + b.position2) - (a.position0 + a.position1 + a.position2));
   
         return {
           totalForms: count,
@@ -182,25 +218,52 @@ export class FirestoreService {
           sleepTimes,
           wakeUpTimes,
           countries,
-          states
+          states,
+  
+          averageUnlocks: totalUnlocks / count,
+          averageTiktokTime: totalTiktokTime / count,
+          averageScreenTime: totalScreenTime / count,
+          averageInstagramTime: totalInstagramTime / count,
+  
+          unlocksArray,
+          tiktokTimesArray,
+          screenTimesArray,
+          instagramTimesArray,
+  
+          finalRankingArray
         };
       })
     ).subscribe(result => {
-      // Emitimos los datos a los Subjects correspondientes
+      // Emitimos arrays de sueño y localización
       this.restLevelsSubject.next(result.restLevels);
       this.sleepTimesSubject.next(result.sleepTimes);
       this.wakeUpTimesSubject.next(result.wakeUpTimes);
-      this.countriesSubject.next(result.countries);  // Emitimos los países
-      this.statesSubject.next(result.states);  // Emitimos los estados
+      this.countriesSubject.next(result.countries);
+      this.statesSubject.next(result.states);
   
-      // Emitimos los otros valores a los Subjects de promedios
+      // Emitimos promedios de sueño
       this.totalFormsRecordsSubject.next(result.totalForms);
       this.averageRestLevelSubject.next(result.averageRestLevel);
       this.averageSleepTimeSubject.next(new Date(result.averageSleepTime * 60000));
       this.averageWakeUpTimeSubject.next(new Date(result.averageWakeUpTime * 60000));
       this.avgSleepDurationSubject.next(result.avgSleepDuration);
+  
+      // Emitimos datos móviles
+      this.unlocksSubject.next(result.averageUnlocks);
+      this.tiktokTimeSubject.next(result.averageTiktokTime);
+      this.screenTimeSubject.next(result.averageScreenTime);
+      this.instagramTimeSubject.next(result.averageInstagramTime);
+  
+      this.unlocksArraySubject.next(result.unlocksArray);
+      this.tiktokTimesArraySubject.next(result.tiktokTimesArray);
+      this.screenTimesArraySubject.next(result.screenTimesArray);
+      this.instagramTimesArraySubject.next(result.instagramTimesArray);
+  
+      // Emitimos ranking final
+      this.finalRankingSubject.next(result.finalRankingArray);
     });
   }
+  
   
   
 }

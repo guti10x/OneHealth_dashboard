@@ -14,7 +14,7 @@ export class AppUsageComponent {
   tiktokTime!: number;
   screenTime!: number;
   instagramTime!: number;
-  finalRankingSubject: string[] = [];
+  finalRankingSubject: { app: string; position0: number; position1: number; position2: number; }[] = [];
   unlocksArray: number[] = [];
   tiktokTimesArray: number[] = [];
   screenTimesArray: number[] = [];
@@ -67,11 +67,6 @@ export class AppUsageComponent {
     this.firestoreService.instagramTimesArray$.subscribe(value => {
       this.instagramTimesArray = value;
       console.log('instagramTimesArray:', value);
-    });
-
-    this.firestoreService.finalRankingsArray$.subscribe(value => {
-      this.finalRankingsArray = value;
-      console.log('finalRankingsArray:', value);
     });
 
   }
