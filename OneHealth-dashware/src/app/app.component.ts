@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
-import { DashboardComponent } from './dashboard/dashboard/dashboard.component';
 
 @Component({
   selector: 'app-root',
-  imports: [DashboardComponent],
   templateUrl: './app.component.html',
+  standalone: false,
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  title = 'onehealh-dashware';
+  title = 'OneHealth-dashware';
 }
