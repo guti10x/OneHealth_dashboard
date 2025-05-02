@@ -7,6 +7,7 @@ import { AppUsageComponent } from './components/app-usage/app-usage.component';
 import { BiometricsComponent } from './components/biometrics/biometrics.component';
 import { HealthPredictionsComponent } from './components/health-predictions/health-predictions.component';
 import { AnxietyLevelsComponent } from './components/anxiety-levels/anxiety-levels.component';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { AnxietyLevelsComponent } from './components/anxiety-levels/anxiety-leve
   ],
   imports: [
     CommonModule,
+    NgxChartsModule  
   ],
   exports: [DashboardComponent]
 })
