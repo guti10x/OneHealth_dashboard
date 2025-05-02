@@ -17,10 +17,12 @@ export class LocationStadisticsComponent implements OnInit {
   ngOnInit(): void {
     this.firestoreService.countries$.subscribe(countries => {
       this.countries = countries;
+      console.log('Countries loaded:', countries);
     });
 
     this.firestoreService.states$.subscribe(states => {
       this.states = states;
+      console.log('States loaded:', states);
     });
   }
 }

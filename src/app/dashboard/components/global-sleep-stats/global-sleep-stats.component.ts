@@ -60,9 +60,5 @@ export class GlobalSleepStatsComponent implements OnInit {
       this.wakeUpTimesSubject = value;
       console.log('wakeUpTimes:', value);
     });
-
-
   }
-
-  
 }
