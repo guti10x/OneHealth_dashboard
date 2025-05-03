@@ -10,6 +10,7 @@ import { AnxietyLevelsComponent } from './components/anxiety-levels/anxiety-leve
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { ModComponent } from './components/mod/mod.component';
 import { LocationStadisticsComponent } from './components/location-stadistics/location-stadistics.component';
+import { NgChartsModule } from 'ng2-charts';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,7 @@ import { LocationStadisticsComponent } from './components/location-stadistics/lo
   ],
   imports: [
     CommonModule,
-    NgxChartsModule  
+    NgChartsModule
   ],
   exports: [DashboardComponent]
 })

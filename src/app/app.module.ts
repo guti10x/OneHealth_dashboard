@@ -10,6 +10,8 @@ import { environment } from '../../environments/environment';
 import { DashboardModule } from "./dashboard/dashboard.module";
 
 import { DashboardComponent } from './dashboard/components/dashboard/dashboard.component';
+import { NgChartsModule } from 'ng2-charts';
+
 
 @NgModule({
   declarations: [
@@ -19,6 +21,7 @@ import { DashboardComponent } from './dashboard/components/dashboard/dashboard.c
     BrowserModule,
     AppRoutingModule,
     DashboardModule,
+    NgChartsModule
     
 ],
   providers: [
