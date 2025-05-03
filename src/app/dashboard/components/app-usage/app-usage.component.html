@@ -1,1 +1,25 @@
-<p>app-usage works!</p>
+<div class="app-usage-container">
+    <h2 class="title">Estadísticas de Uso de Aplicaciones</h2>
+
+    <div class="cards-container">
+        <div class="stat-card">
+            <h3>Desbloqueos del Teléfono</h3>
+            <p>{{ unlocks | number:'1.0-0' }}</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>Tiempo en TikTok</h3>
+            <p>{{ tiktokTime | number:'1.0-2' }} min</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>Tiempo Total de Pantalla</h3>
+            <p>{{ screenTime | number:'1.0-2' }} min</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>Tiempo en Instagram</h3>
+            <p>{{ instagramTime | number:'1.0-2' }} min</p>
+        </div>
+    </div>
+</div>

@@ -1,1 +1,36 @@
-<p>mod works!</p>
+<div class="mod-stats-container">
+    <h2 class="title">Estadísticas Globales de Estado de Ánimo</h2>
+  
+    <div class="cards-container">
+      <div class="stat-card">
+        <h3>Nivel de Tristeza</h3>
+        <p>{{ sadnessLevel | number:'1.1-2' }}</p>
+      </div>
+  
+      <div class="stat-card">
+        <h3>Nivel Máximo de Ansiedad</h3>
+        <p>{{ maxAnxietyLevel | number:'1.1-2' }}</p>
+      </div>
+  
+      <div class="stat-card">
+        <h3>Nivel de Felicidad</h3>
+        <p>{{ happinessLevel | number:'1.1-2' }}</p>
+      </div>
+  
+      <div class="stat-card">
+        <h3>Nivel Promedio de Energía</h3>
+        <p>{{ avgEnergyLevel | number:'1.1-2' }}</p>
+      </div>
+  
+      <div class="stat-card">
+        <h3>Nivel Promedio de Ansiedad</h3>
+        <p>{{ avgAnxietyLevel | number:'1.1-2' }}</p>
+      </div>
+  
+      <div class="stat-card">
+        <h3>Nivel de Apatía</h3>
+        <p>{{ apathyLevel | number:'1.1-2' }}</p>
+      </div>
+    </div>
+  </div>
+  
