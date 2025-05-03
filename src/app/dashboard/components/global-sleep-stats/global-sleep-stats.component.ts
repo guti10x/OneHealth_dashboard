@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
 import { FirestoreService } from '../../../core/services/firestore.service';
+import { ChartData } from 'chart.js'; 
 
 @Component({
   selector: 'app-global-sleep-stats',
@@ -10,55 +10,125 @@ import { FirestoreService } from '../../../core/services/firestore.service';
 })
 export class GlobalSleepStatsComponent implements OnInit {
 
-  constructor(private formulariosService: FirestoreService) {}
-
   // Overage variables
   averageRestLevel: number | null = null;
-  averageSleepTime: Date | null = null;
-  averageWakeUpTime: Date | null = null;
-  avgSleepDuration: number | null = null;
 
   // All data variables
   restLevelsSubject: any[] = [];
-  sleepTimesSubject: any[] = [];
-  wakeUpTimesSubject: any[] = [];
+  sleepTimesSubject: Date[] = [];
+  wakeUpTimesSubject: Date[] = [];
+
+  // Data for the charts
+  sleepLevelChartData: ChartData<'bar'> = {
+    labels: ['Nivel de Descanso'],
+    datasets: [
+      {
+        label: 'Nivel de Descanso',
+        data: [this.averageRestLevel ?? 0],
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1
+      }
+    ]
+  };
+
+  sleepTimeChartData: ChartData<'line'> = {
+    labels: Array(24).fill(''),  // 24 hours in a day
+    datasets: [
+      {
+        label: 'Hora de Acostarse',
+        data: Array(24).fill(0),
+        fill: true,
+        borderColor: 'rgba(75, 192, 192, 1)',
+        tension: 0.4
+      }
+    ]
+  };
+
+  wakeUpTimeChartData: ChartData<'line'> = {
+    labels: Array(24).fill(''),  // 24 hours in a day
+    datasets: [
+      {
+        label: 'Hora de Despertar',
+        data: Array(24).fill(0),  // Initialize array with zero occurrences for each hour
+        fill: true,
+        borderColor: 'rgba(153, 102, 255, 1)',
+        tension: 0.4
+      }
+    ]
+  };
+
+  // Chart options for the bar chart (Nivel de Descanso)
+  barChartOptions = {
+    responsive: true
+  };
+
+  // Chart options for the line charts (Hora de Acostarse y Hora de Despertar)
+  lineChartOptions = {
+    responsive: true,
+    scales: {
+      x: {
+        min: 0,
+        max: 23,
+        ticks: {
+          stepSize: 1,
+          callback: (value: any) => this.formatTime(value)
+        }
+      }
+    }
+  };
+
+  constructor(private formulariosService: FirestoreService) {}
 
   ngOnInit(): void {
-
-    // Suscribirse a las variables y hacer console.log de cada valor
     this.formulariosService.averageRestLevel$.subscribe(value => {
       this.averageRestLevel = value;
-      console.log('averageRestLevel:', value);
-    });
-
-    this.formulariosService.averageSleepTime$.subscribe(value => {
-      this.averageSleepTime = value;
-      console.log('averageSleepTime:', value);
-    });
-
-    this.formulariosService.averageWakeUpTime$.subscribe(value => {
-      this.averageWakeUpTime = value;
-      console.log('averageWakeUpTime:', value);
-    });
-
-    this.formulariosService.avgSleepDuration$.subscribe(value => {
-      this.avgSleepDuration = value;
-      console.log('avgSleepDuration:', value);
-    });
-
-    this.formulariosService.restLevels$.subscribe(value => {
-      this.restLevelsSubject = value;
-      console.log('restLevels:', value);
+      this.updateSleepLevelChart();
     });
 
     this.formulariosService.sleepTimes$.subscribe(value => {
       this.sleepTimesSubject = value;
-      console.log('sleepTimes:', value);
+      this.updateSleepTimeChart();
     });
 
     this.formulariosService.wakeUpTimes$.subscribe(value => {
       this.wakeUpTimesSubject = value;
-      console.log('wakeUpTimes:', value);
+      this.updateWakeUpTimeChart();
     });
+  }
+
+  // Update the bar chart data for "Nivel de Descanso"
+  updateSleepLevelChart(): void {
+    this.sleepLevelChartData.datasets[0].data = [this.averageRestLevel ?? 0];
+  }
+
+  // Update the line chart with time data for "Hora de Acostarse"
+  updateSleepTimeChart(): void {
+    const sleepHours = this.getTimeOccurrences(this.sleepTimesSubject);
+    this.sleepTimeChartData.datasets[0].data = sleepHours;
+  }
+
+  // Update the line chart with time data for "Hora de Despertar"
+  updateWakeUpTimeChart(): void {
+    const wakeUpHours = this.getTimeOccurrences(this.wakeUpTimesSubject);
+    this.wakeUpTimeChartData.datasets[0].data = wakeUpHours;
+  }
+
+  // Convert a date to an hour (0-23) and count the occurrences per hour
+  getTimeOccurrences(times: Date[]): number[] {
+    const hoursCount = Array(24).fill(0); 
+    
+    // Count occurrences for each hour (0-23)
+    times.forEach((time: Date) => {
+      const hour = time.getHours();
+      hoursCount[hour] += 1;
+    });
+
+    return hoursCount;
+  }
+
+  // Format the time to be shown on the chart's x-axis as 'HH:00'
+  formatTime(value: number): string {
+    return `${value}:00`;
   }
 }

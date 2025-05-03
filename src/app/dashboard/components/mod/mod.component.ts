@@ -103,7 +103,7 @@ export class ModComponent {
 
     return {
       data: {
-        labels: frequencies.map((_, i) => `Nivel ${i}`),
+        labels: frequencies.map((_, i) => `${i}`),
         datasets: [{
           data: frequencies,
           label: `Distribución de ${label}`,
@@ -121,7 +121,7 @@ export class ModComponent {
         },
         scales: {
           x: {
-            title: { display: true, text: 'Nivel' }
+            title: { display: true, text: `Nivel de ${label}` }
           },
           y: {
             beginAtZero: true,

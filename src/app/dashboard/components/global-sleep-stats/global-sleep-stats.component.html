@@ -1,26 +1,21 @@
-<div class="sleep-stats-container">
-  <h2 class="title">Estadísticas Globales de Sueño</h2>
-
-  <div class="cards-container">
-    <div class="stat-card">
-      <h3>Nivel Promedio de Descanso experimentado</h3>
-      <p>{{ averageRestLevel | number:'1.1-2' }}</p>
-    </div>
-
-    <div class="stat-card">
-      <h3>Hora Promedio de irse a Dormir</h3>
-      <p>{{ averageSleepTime | date:'shortTime' }}</p>
-    </div>
-
-    <div class="stat-card">
-      <h3>Hora Promedio de Despertarse</h3>
-      <p>{{ averageWakeUpTime | date:'shortTime' }}</p>
-    </div>
-
-    <div class="stat-card">
-      <h3>Duración Promedio de Sueño</h3>
-      <p>{{ avgSleepDuration | number:'1.0-2' }} min</p>
-    </div>
+<div class="charts-container">
+  <!-- Gráfico de Hora de Acostarse -->
+  <div class="chart">
+    <h3 class="title">Horario promedio de Acostarse</h3>
+    <canvas *ngIf="sleepTimesSubject.length > 0" baseChart
+            [data]="sleepTimeChartData"
+            [options]="lineChartOptions"
+            [type]="'line'">
+    </canvas>
   </div>
 
+  <!-- Gráfico de Hora de Despertar -->
+  <div class="chart">
+    <h3 class="title">Horario promedio de Despertarse</h3>
+    <canvas *ngIf="wakeUpTimesSubject.length > 0" baseChart
+            [data]="wakeUpTimeChartData"
+            [options]="lineChartOptions"
+            [type]="'line'">
+    </canvas>
+  </div>
 </div>
