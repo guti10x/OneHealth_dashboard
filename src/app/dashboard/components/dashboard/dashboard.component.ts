@@ -10,11 +10,14 @@ import { FirestoreService } from '../../../core/services/firestore.service';
 })
 export class DashboardComponent implements OnInit {
 
-  
   constructor(private firestoreService: FirestoreService) {}
 
   ngOnInit(): void {
     this.firestoreService.loadUserCollection();
     this.firestoreService.loadFormulariosCollection();
+  }
+
+  downloadExcel() {
+    this.firestoreService.exportFormulariosToExcel();
   }
 }

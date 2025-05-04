@@ -15,10 +15,6 @@ export class AppUsageComponent {
   instagramTime!: number;
 
   finalRankingSubject: { app: string; position0: number; position1: number; position2: number; }[] = [];
-  unlocksArray: number[] = [];
-  tiktokTimesArray: number[] = [];
-  screenTimesArray: number[] = [];
-  instagramTimesArray: number[] = [];
 
   podium: { app: string }[] = [];
 
@@ -57,26 +53,6 @@ export class AppUsageComponent {
       });
 
       this.podium = sorted.slice(0, 3).map(entry => ({ app: entry.app }));
-    });
-
-    this.firestoreService.unlocksArray$.subscribe(value => {
-      this.unlocksArray = value;
-      console.log('unlocksArray:', value);
-    });
-
-    this.firestoreService.tiktokTimesArray$.subscribe(value => {
-      this.tiktokTimesArray = value;
-      console.log('tiktokTimesArray:', value);
-    });
-
-    this.firestoreService.screenTimesArray$.subscribe(value => {
-      this.screenTimesArray = value;
-      console.log('screenTimesArray:', value);
-    });
-
-    this.firestoreService.instagramTimesArray$.subscribe(value => {
-      this.instagramTimesArray = value;
-      console.log('instagramTimesArray:', value);
     });
   }
 }

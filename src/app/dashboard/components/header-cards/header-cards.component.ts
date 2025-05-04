@@ -11,6 +11,8 @@ export class HeaderCardsComponent {
   totalUsers: number | null = null;
   activeUsers: number | null = null;
   totalRecords: number | null = null;
+  totalPredicitions : number | null = null;
+  totalAnxietyPredicitionsDetected: number | null = null;
 
   constructor(private firestoreService: FirestoreService) {}
 

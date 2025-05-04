@@ -27,26 +27,6 @@
       </div>
     </div>
 
-        <!-- Gráfico de Nivel de Descanso -->
-        <div class="chart">
-          <div class="chart-header">
-            <h3>Nivel de Descanso Promedio</h3>
-          </div>
-          <canvas *ngIf="isBrowser" baseChart [data]="chartConfigs.sleepLevelChart.data"
-            [options]="chartConfigs.sleepLevelChart.options" [type]="'bar'">
-          </canvas>
-          <div class="stats-summary">
-            <div class="stat-item">
-              <strong>Promedio</strong>
-              <p>{{ averageRestLevel ?? 'N/A' }}</p>
-            </div>
-            <div class="stat-item">
-              <strong>Duración promedia del sueño</strong>
-              <p>{{ avgSleepDuration ? (avgSleepDuration | number:'1.1-1') + 'h' : 'N/A' }}</p>
-            </div>
-          </div>
-        </div>
-
     <!-- Gráfico de Hora de Despertarse -->
     <div class="chart">
       <div class="chart-header">
@@ -67,6 +47,26 @@
         <div class="stat-item">
           <strong>Máximo</strong>
           <p>{{ maxWakeUpTime ? (maxWakeUpTime | date:'shortTime') : 'N/A' }}</p>
+        </div>
+      </div>
+    </div>
+
+     <!-- Gráfico de Nivel de Descanso -->
+     <div class="chart">
+      <div class="chart-header">
+        <h3>Nivel de Descanso Promedio</h3>
+      </div>
+      <canvas *ngIf="isBrowser" baseChart [data]="chartConfigs.sleepLevelChart.data"
+        [options]="chartConfigs.sleepLevelChart.options" [type]="'bar'">
+      </canvas>
+      <div class="stats-summary">
+        <div class="stat-item">
+          <strong>Promedio</strong>
+          <p>{{ averageRestLevel ?? 'N/A' }}</p>
+        </div>
+        <div class="stat-item">
+          <strong>Duración promedia del sueño</strong>
+          <p>{{ avgSleepDuration ? (avgSleepDuration | number:'1.1-1') + 'h' : 'N/A' }}</p>
         </div>
       </div>
     </div>

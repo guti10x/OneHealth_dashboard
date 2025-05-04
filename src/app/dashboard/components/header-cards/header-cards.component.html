@@ -1,15 +1,22 @@
 <div class="header-scroll">
-    <div class="header-card" *ngIf="totalUsers !== undefined">
-      <span class="label">Usuarios Totales Registrados</span>
-      <span class="value">{{ totalUsers }}</span>
-    </div>
-    <div class="header-card">
-      <span class="label">Usuarios Activos</span>
-      <span class="value">{{ activeUsers }}</span>
-    </div>
-    <div class="header-card">
-      <span class="label">Formularios totales Recopilados</span>
-      <span class="value">{{ totalRecords }}</span>
-    </div>
+  <div class="header-card" *ngIf="totalUsers !== undefined">
+    <span class="label">Usuarios Totales Registrados</span>
+    <span class="value">{{ totalUsers ?? '-' }}</span>
   </div>
-  
+  <div class="header-card">
+    <span class="label">Usuarios Activos</span>
+    <span class="value">{{ activeUsers ?? '-' }}</span>
+  </div>
+  <div class="header-card">
+    <span class="label">Formularios totales Recopilados</span>
+    <span class="value">{{ totalRecords ?? '-' }}</span>
+  </div>
+  <div class="header-card">
+    <span class="label">Total predicciones realizadas</span>
+    <span class="value">{{ totalPredicitions ?? '-' }}</span>
+  </div>
+  <div class="header-card">
+    <span class="label">Ataques de ansiedad predecidos</span>
+    <span class="value">{{ totalAnxietyPredicitionsDetected ?? '-' }}</span>
+  </div>
+</div>

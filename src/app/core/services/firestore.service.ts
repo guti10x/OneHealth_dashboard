@@ -2,13 +2,37 @@ import { Injectable } from '@angular/core';
 import { Firestore, collection, collectionData } from '@angular/fire/firestore';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+
+// Definición de la interfaz para los datos del excell
+export interface FormularioData {
+  id: string;
+  rest_level: number;
+  sleep_time: string;
+  wake_up_time: string;
+  unlocks: number;
+  tiktok_time: number;
+  screen_time: number;
+  instagram_time: number;
+  final_ranking: string;
+  sadnessLevel: number;
+  maxAnxietyLevel: number;
+  happinessLevel: number;
+  avgEnergyLevel: number;
+  avgAnxietyLevel: number;
+  apathyLevel: number;
+  country: string;
+  state: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
+
 export class FirestoreService {
 
-  constructor(private firestore: Firestore) {}
+  constructor(private firestore: Firestore) { }
 
   // Header variables
   private totalUsersSubject = new BehaviorSubject<number>(0);
@@ -69,15 +93,15 @@ export class FirestoreService {
   screenTime$ = this.screenTimeSubject.asObservable();
   instagramTime$ = this.instagramTimeSubject.asObservable();
   finalRanking$ = this.finalRankingSubject.asObservable();
-  private unlocksArraySubject = new BehaviorSubject<number[]>([]);
-  private tiktokTimesArraySubject = new BehaviorSubject<number[]>([]);
-  private screenTimesArraySubject = new BehaviorSubject<number[]>([]);
-  private instagramTimesArraySubject = new BehaviorSubject<number[]>([]);
-  unlocksArray$ = this.unlocksArraySubject.asObservable();
-  tiktokTimesArray$ = this.tiktokTimesArraySubject.asObservable();
-  screenTimesArray$ = this.screenTimesArraySubject.asObservable();
-  instagramTimesArray$ = this.instagramTimesArraySubject.asObservable();
-  
+  //private unlocksArraySubject = new BehaviorSubject<number[]>([]);
+  //private tiktokTimesArraySubject = new BehaviorSubject<number[]>([]);
+  //private screenTimesArraySubject = new BehaviorSubject<number[]>([]);
+  //private instagramTimesArraySubject = new BehaviorSubject<number[]>([]);
+  //unlocksArray$ = this.unlocksArraySubject.asObservable();
+  //tiktokTimesArray$ = this.tiktokTimesArraySubject.asObservable();
+  //screenTimesArray$ = this.screenTimesArraySubject.asObservable();
+  //instagramTimesArray$ = this.instagramTimesArraySubject.asObservable();
+
   // location
   private countriesSubject = new BehaviorSubject<string[]>([]);
   private statesSubject = new BehaviorSubject<string[]>([]);
@@ -85,9 +109,12 @@ export class FirestoreService {
   states$ = this.statesSubject.asObservable();
 
   // Predictions
-
+  //
   // Biometric data
+  //
 
+  ////// OBTENER DATOS DE LA BASE DE DATOS //////
+  // Obtener datos de los uuarios de la base de datos
   public loadUserCollection(): void {
     const ref = collection(this.firestore, 'users');
     collectionData(ref, { idField: 'id' })
@@ -103,25 +130,7 @@ export class FirestoreService {
       .subscribe();
   }
 
-  private processSleepData(form: any) {
-    const sleepTime = form['sleep_time'] ? new Date(form['sleep_time'].seconds * 1000) : null;
-    const wakeUpTime = form['wake_up_time'] ? new Date(form['wake_up_time'].seconds * 1000) : null;
-    let sleepDuration = 0;
-  
-    if (sleepTime && wakeUpTime) {
-      sleepDuration = (wakeUpTime.getTime() - sleepTime.getTime()) / (1000 * 60 * 60);
-    }
-  
-    return { sleepTime, wakeUpTime, sleepDuration };
-  }
-
-  private processLocationData(form: any) {
-    const country = form['country'] || null;
-    const state = form['state'] || null;
-  
-    return { country, state };
-  }
-  
+  // Obtener datos de los formularios de la base de datos 
   public loadFormulariosCollection(): void {
     const ref = collection(this.firestore, 'formularios');
     collectionData(ref, { idField: 'id' }).pipe(
@@ -131,25 +140,25 @@ export class FirestoreService {
         let totalWakeUpTime = 0;
         let totalSleepDuration = 0;
         let count = formularios.length;
-  
+
         const restLevels: number[] = [];
         const sleepTimes: Date[] = [];
         const wakeUpTimes: Date[] = [];
         const countries: string[] = [];
         const states: string[] = [];
-  
+
         let totalUnlocks = 0;
         let totalTiktokTime = 0;
         let totalScreenTime = 0;
         let totalInstagramTime = 0;
-  
+
         const unlocksArray: number[] = [];
         const tiktokTimesArray: number[] = [];
         const screenTimesArray: number[] = [];
         const instagramTimesArray: number[] = [];
-  
+
         const positionCounts: Record<string, number[]> = {};
-  
+
         // Nuevos acumuladores y arrays
         let totalSadness = 0;
         let totalAnxiety = 0;
@@ -157,13 +166,13 @@ export class FirestoreService {
         let totalHappiness = 0;
         let totalApathy = 0;
         let maxAnxiety = 0;
-  
+
         const sadnessLevels: number[] = [];
         const anxietyLevels: number[] = [];
         const happinessLevels: number[] = [];
         const energyLevels: number[] = [];
         const apathyLevels: number[] = [];
-  
+
         formularios.forEach(form => {
           // Datos de sueño
           const { sleepTime, wakeUpTime, sleepDuration } = this.processSleepData(form);
@@ -171,41 +180,41 @@ export class FirestoreService {
           if (sleepTime) totalSleepTime += sleepTime.getHours() * 60 + sleepTime.getMinutes();
           if (wakeUpTime) totalWakeUpTime += wakeUpTime.getHours() * 60 + wakeUpTime.getMinutes();
           totalRestLevel += form['rest_level'] || 0;
-  
+
           if (form['rest_level']) restLevels.push(form['rest_level']);
           if (sleepTime) sleepTimes.push(sleepTime);
           if (wakeUpTime) wakeUpTimes.push(wakeUpTime);
-  
+
           const { country, state } = this.processLocationData(form);
           if (country && !countries.includes(country)) countries.push(country);
           if (state && !states.includes(state)) states.push(state);
-  
+
           // Datos móviles
           const unlocks = form['unlocks'] || 0;
           const tiktokTime = form['tiktok_time'] || 0;
           const screenTime = form['screen_time'] || 0;
           const instagramTime = form['instagram_time'] || 0;
-  
+
           totalUnlocks += unlocks;
           totalTiktokTime += tiktokTime;
           totalScreenTime += screenTime;
           totalInstagramTime += instagramTime;
-  
+
           unlocksArray.push(unlocks);
           tiktokTimesArray.push(tiktokTime);
           screenTimesArray.push(screenTime);
           instagramTimesArray.push(instagramTime);
-  
+
           // Ranking
           const rankingString = form['final_ranking'] || '';
-            const apps: string[] = rankingString.split(',').map((app: string): string => app.trim()).filter((app: string): boolean => Boolean(app));
+          const apps: string[] = rankingString.split(',').map((app: string): string => app.trim()).filter((app: string): boolean => Boolean(app));
           apps.forEach((app, index) => {
             if (index <= 2) {
               if (!positionCounts[app]) positionCounts[app] = [0, 0, 0];
               positionCounts[app][index]++;
             }
           });
-  
+
           // Nuevos campos emocionales
           const sadness = form['sadnessLevel'] || 0;
           const maxAnxietyLevel = form['maxAnxietyLevel'] || 0;
@@ -213,22 +222,22 @@ export class FirestoreService {
           const avgEnergy = form['avgEnergyLevel'] || 0;
           const avgAnxiety = form['avgAnxietyLevel'] || 0;
           const apathy = form['apathyLevel'] || 0;
-  
+
           totalSadness += sadness;
           totalAnxiety += avgAnxiety;
           totalEnergy += avgEnergy;
           totalHappiness += happiness;
           totalApathy += apathy;
-  
+
           if (maxAnxietyLevel > maxAnxiety) maxAnxiety = maxAnxietyLevel;
-  
+
           sadnessLevels.push(sadness);
           anxietyLevels.push(avgAnxiety);
           happinessLevels.push(happiness);
           energyLevels.push(avgEnergy);
           apathyLevels.push(apathy);
         });
-  
+
         const finalRankingArray = Object.entries(positionCounts)
           .map(([app, counts]) => ({
             app,
@@ -237,7 +246,7 @@ export class FirestoreService {
             position2: counts[2]
           }))
           .sort((a, b) => (b.position0 + b.position1 + b.position2) - (a.position0 + a.position1 + a.position2));
-  
+
         return {
           totalForms: count,
           averageRestLevel: totalRestLevel / count,
@@ -278,26 +287,26 @@ export class FirestoreService {
       this.wakeUpTimesSubject.next(result.wakeUpTimes);
       this.countriesSubject.next(result.countries);
       this.statesSubject.next(result.states);
-  
+
       this.totalFormsRecordsSubject.next(result.totalForms);
       this.averageRestLevelSubject.next(result.averageRestLevel);
       this.averageSleepTimeSubject.next(new Date(result.averageSleepTime * 60000));
       this.averageWakeUpTimeSubject.next(new Date(result.averageWakeUpTime * 60000));
       this.avgSleepDurationSubject.next(result.avgSleepDuration);
-  
+
       // Datos móviles
       this.unlocksSubject.next(result.averageUnlocks);
       this.tiktokTimeSubject.next(result.averageTiktokTime);
       this.screenTimeSubject.next(result.averageScreenTime);
       this.instagramTimeSubject.next(result.averageInstagramTime);
-      this.unlocksArraySubject.next(result.unlocksArray);
-      this.tiktokTimesArraySubject.next(result.tiktokTimesArray);
-      this.screenTimesArraySubject.next(result.screenTimesArray);
-      this.instagramTimesArraySubject.next(result.instagramTimesArray);
-  
+      //this.unlocksArraySubject.next(result.unlocksArray);
+      //this.tiktokTimesArraySubject.next(result.tiktokTimesArray);
+      //this.screenTimesArraySubject.next(result.screenTimesArray);
+      //this.instagramTimesArraySubject.next(result.instagramTimesArray);
+
       // Ranking
       this.finalRankingSubject.next(result.finalRankingArray);
-  
+
       // Datos emocionales
       this.sadnessLevelSubject.next(result.averageSadnessLevel);
       this.maxAnxietyLevelSubject.next(result.maxAnxietyLevel);
@@ -305,7 +314,7 @@ export class FirestoreService {
       this.avgEnergyLevelSubject.next(result.averageEnergyLevel);
       this.avgAnxietyLevelSubject.next(result.averageAnxietyLevel);
       this.apathyLevelSubject.next(result.averageApathyLevel);
-  
+
       this.sadnessLevelsSubject.next(result.sadnessLevels);
       this.anxietyLevelsSubject.next(result.anxietyLevels);
       this.happinessLevelsSubject.next(result.happinessLevels);
@@ -313,5 +322,63 @@ export class FirestoreService {
       this.apathyLevelsSubject.next(result.apathyLevels);
     });
   }
- 
+
+  ///// FUNCIONES AUXILIARES //////
+  // Procesar datos de sueño y localización
+  private processSleepData(form: any) {
+    const sleepTime = form['sleep_time'] ? new Date(form['sleep_time'].seconds * 1000) : null;
+    const wakeUpTime = form['wake_up_time'] ? new Date(form['wake_up_time'].seconds * 1000) : null;
+    let sleepDuration = 0;
+
+    if (sleepTime && wakeUpTime) {
+      sleepDuration = (wakeUpTime.getTime() - sleepTime.getTime()) / (1000 * 60 * 60);
+    }
+
+    return { sleepTime, wakeUpTime, sleepDuration };
+  }
+
+  // Procesar datos de localización
+  private processLocationData(form: any) {
+    const country = form['country'] || null;
+    const state = form['state'] || null;
+
+    return { country, state };
+  }
+
+
+  ///// EXPORTAR A EXCEL //////
+  // Exportar datos de la bd a Excel
+  public exportFormulariosToExcel(): void {
+    const ref = collection(this.firestore, 'formularios');
+    collectionData(ref, { idField: 'id' }).subscribe((formularios: any[]) => {
+      const exportData: FormularioData[] = formularios.map((form: any) => ({
+        id: form.id,
+        rest_level: form.rest_level || 0,
+        sleep_time: form.sleep_time ? new Date(form.sleep_time.seconds * 1000).toISOString() : '',
+        wake_up_time: form.wake_up_time ? new Date(form.wake_up_time.seconds * 1000).toISOString() : '',
+        unlocks: form.unlocks || 0,
+        tiktok_time: form.tiktok_time || 0,
+        screen_time: form.screen_time || 0,
+        instagram_time: form.instagram_time || 0,
+        final_ranking: form.final_ranking || '',
+        sadnessLevel: form.sadnessLevel || 0,
+        maxAnxietyLevel: form.maxAnxietyLevel || 0,
+        happinessLevel: form.happinessLevel || 0,
+        avgEnergyLevel: form.avgEnergyLevel || 0,
+        avgAnxietyLevel: form.avgAnxietyLevel || 0,
+        apathyLevel: form.apathyLevel || 0,
+        country: form.country || '',
+        state: form.state || ''
+      }));
+
+      const worksheet = XLSX.utils.json_to_sheet(exportData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Formularios');
+
+      const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+      const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+      saveAs(blob, `formularios-${new Date().toISOString().slice(0, 10)}.xlsx`);
+    });
+  }
+
 }

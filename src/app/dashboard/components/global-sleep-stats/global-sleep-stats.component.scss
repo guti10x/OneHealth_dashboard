@@ -1,26 +1,32 @@
 .mod-stats-container {
-  padding: 1rem;
+  padding: 1rem 1.5rem;
   font-family: 'Segoe UI', sans-serif;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
 
   .title {
     font-size: 1.5rem;
     font-weight: 600;
     text-align: center;
     color: #333;
+    margin-bottom: 1rem;
   }
 
   .charts-container {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem;
-    justify-items: center;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+    justify-items: stretch;
 
     .chart {
-      background: #fff;
-      border-radius: 8px;
+      background: #fefefe;
+      border-radius: 10px;
       padding: 1rem;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-      width: 320px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+      width: 100%;
+      max-width: 100%;
       text-align: center;
 
       .chart-header {
@@ -29,6 +35,7 @@
         h3 {
           font-size: 1.2rem;
           color: #007acc;
+          margin: 0;
         }
       }
 
@@ -39,24 +46,28 @@
 
       .stats-summary {
         display: flex;
-        justify-content: space-between;
+        justify-content: space-around;
         margin-top: 1rem;
+        flex-wrap: wrap;
 
         .stat-item {
-          text-align: left;
+          text-align: center;
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
+          min-width: 80px;
 
           p {
-            font-size: 1.1rem;
-            color: #222;
+            font-size: 1rem;
+            color: #444;
             margin: 0;
           }
 
           strong {
             color: #007acc;
+            font-size: 1.1rem;
+            margin-top: 0.25rem;
           }
         }
       }
