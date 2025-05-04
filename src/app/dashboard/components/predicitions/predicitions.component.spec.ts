@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AnxietyLevelsComponent } from './anxiety-levels.component';
+import { PredicitionsComponent } from './predicitions.component';
 
-describe('AnxietyLevelsComponent', () => {
-  let component: AnxietyLevelsComponent;
-  let fixture: ComponentFixture<AnxietyLevelsComponent>;
+describe('PredicitionsComponent', () => {
+  let component: PredicitionsComponent;
+  let fixture: ComponentFixture<PredicitionsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [AnxietyLevelsComponent]
+      declarations: [PredicitionsComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AnxietyLevelsComponent);
+    fixture = TestBed.createComponent(PredicitionsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -49,7 +49,6 @@ export class ModComponent {
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
   
-
   ngOnInit(): void {
     this.firestoreService.sadnessLevel$.subscribe(val => this.sadnessLevel = val);
     this.firestoreService.maxAnxietyLevel$.subscribe(val => this.maxAnxietyLevel = val);
@@ -140,4 +139,14 @@ export class ModComponent {
     const sum = values.reduce((a, b) => a + b, 0);
     return values.length ? sum / values.length : 0;
   }
+
+  emotionLabels: { [key: string]: string } = {
+    sadness: 'Tristeza',
+    anxiety: 'Ansiedad',
+    happiness: 'Felicidad',
+    energy: 'Energía',
+    apathy: 'Apatía'
+  };
+  
+  emotionKeys: string[] = ['sadness', 'anxiety', 'happiness', 'energy', 'apathy'];
 }

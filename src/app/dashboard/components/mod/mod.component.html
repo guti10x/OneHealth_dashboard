@@ -2,7 +2,7 @@
   <div class="charts-container">
     <div class="chart" *ngFor="let key of ['sadness', 'anxiety', 'happiness', 'energy', 'apathy']">
       <div class="chart-header">
-        <h3>{{ key | titlecase }} de los Usuarios</h3>
+        <h3>Distribución de {{ emotionLabels[key] }} de los Usuarios</h3>
       </div>
       
       <canvas baseChart

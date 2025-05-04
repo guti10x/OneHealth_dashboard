@@ -5,12 +5,11 @@ import { HeaderCardsComponent } from './components/header-cards/header-cards.com
 import { GlobalSleepStatsComponent } from './components/global-sleep-stats/global-sleep-stats.component';
 import { AppUsageComponent } from './components/app-usage/app-usage.component';
 import { BiometricsComponent } from './components/biometrics/biometrics.component';
-import { HealthPredictionsComponent } from './components/health-predictions/health-predictions.component';
-import { AnxietyLevelsComponent } from './components/anxiety-levels/anxiety-levels.component';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { ModComponent } from './components/mod/mod.component';
 import { LocationStadisticsComponent } from './components/location-stadistics/location-stadistics.component';
 import { NgChartsModule } from 'ng2-charts';
+import { PredicitionsComponent } from './components/predicitions/predicitions.component';
 
 @NgModule({
   declarations: [
@@ -19,10 +18,9 @@ import { NgChartsModule } from 'ng2-charts';
     GlobalSleepStatsComponent,
     AppUsageComponent,
     BiometricsComponent,
-    HealthPredictionsComponent,
-    AnxietyLevelsComponent,
     ModComponent,
-    LocationStadisticsComponent
+    LocationStadisticsComponent,
+    PredicitionsComponent
   ],
   imports: [
     CommonModule,
