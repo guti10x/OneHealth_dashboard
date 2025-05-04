@@ -1,25 +1,44 @@
 <div class="app-usage-container">
-    <h2 class="title">Estadísticas de Uso de Aplicaciones</h2>
-
-    <div class="cards-container">
-        <div class="stat-card">
-            <h3>Desbloqueos del Teléfono</h3>
-            <p>{{ unlocks | number:'1.0-0' }}</p>
+    <!-- PODIO - Top 3 Aplicaciones -->
+    <div class="stat-card podium-container" *ngIf="podium.length > 0">
+      <h2 class="title">Top 3 Aplicaciones más utilizadas</h2>
+      <div class="podium">
+        <div class="podium-item silver">
+          <span class="medal">🥈</span>
+          <p>{{ podium[1].app || '---' }}</p>
         </div>
-
-        <div class="stat-card">
-            <h3>Tiempo en TikTok</h3>
-            <p>{{ tiktokTime | number:'1.0-2' }} min</p>
+        <div class="podium-item gold">
+          <span class="medal">🥇</span>
+          <p>{{ podium[0].app || '---' }}</p>
         </div>
-
-        <div class="stat-card">
-            <h3>Tiempo Total de Pantalla</h3>
-            <p>{{ screenTime | number:'1.0-2' }} min</p>
+        <div class="podium-item bronze">
+          <span class="medal">🥉</span>
+          <p>{{ podium[2].app || '---' }}</p>
         </div>
-
-        <div class="stat-card">
-            <h3>Tiempo en Instagram</h3>
-            <p>{{ instagramTime | number:'1.0-2' }} min</p>
-        </div>
+      </div>
     </div>
-</div>
+  
+    <!-- Estadísticas de uso de aplicaciones -->
+    <div class="cards-container">
+      <div class="stat-card">
+        <h3>Desbloqueos del Teléfono</h3>
+        <p>{{ unlocks | number:'1.0-0' }}</p>
+      </div>
+  
+      <div class="stat-card">
+        <h3>Tiempo en TikTok</h3>
+        <p>{{ tiktokTime | number:'1.0-2' }} min</p>
+      </div>
+  
+      <div class="stat-card">
+        <h3>Tiempo Total de Pantalla</h3>
+        <p>{{ screenTime | number:'1.0-2' }} min</p>
+      </div>
+  
+      <div class="stat-card">
+        <h3>Tiempo en Instagram</h3>
+        <p>{{ instagramTime | number:'1.0-2' }} min</p>
+      </div>
+    </div>
+  </div>
+  

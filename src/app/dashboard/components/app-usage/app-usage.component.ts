@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { FirestoreService } from '../../../core/services/firestore.service';
-import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-app-usage',
@@ -14,12 +13,14 @@ export class AppUsageComponent {
   tiktokTime!: number;
   screenTime!: number;
   instagramTime!: number;
+
   finalRankingSubject: { app: string; position0: number; position1: number; position2: number; }[] = [];
   unlocksArray: number[] = [];
   tiktokTimesArray: number[] = [];
   screenTimesArray: number[] = [];
   instagramTimesArray: number[] = [];
-  finalRankingsArray: string[] = [];
+
+  podium: { app: string }[] = [];
 
   constructor(private firestoreService: FirestoreService) {}
 
@@ -47,6 +48,15 @@ export class AppUsageComponent {
     this.firestoreService.finalRanking$.subscribe(value => {
       this.finalRankingSubject = value;
       console.log('finalRanking:', value);
+
+      // Calcular podio ordenando por peso de medallas
+      const sorted = [...value].sort((a, b) => {
+        const aScore = a.position0 * 3 + a.position1 * 2 + a.position2 * 1;
+        const bScore = b.position0 * 3 + b.position1 * 2 + b.position2 * 1;
+        return bScore - aScore;
+      });
+
+      this.podium = sorted.slice(0, 3).map(entry => ({ app: entry.app }));
     });
 
     this.firestoreService.unlocksArray$.subscribe(value => {
@@ -68,6 +78,5 @@ export class AppUsageComponent {
       this.instagramTimesArray = value;
       console.log('instagramTimesArray:', value);
     });
-
   }
 }
