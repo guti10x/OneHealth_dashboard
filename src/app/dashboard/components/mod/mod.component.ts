@@ -48,6 +48,7 @@ export class ModComponent {
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
+  
 
   ngOnInit(): void {
     this.firestoreService.sadnessLevel$.subscribe(val => this.sadnessLevel = val);

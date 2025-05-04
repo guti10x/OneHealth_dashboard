@@ -1,21 +1,65 @@
-.charts-container {
-  display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: 2rem;
-  justify-items: center;
-}
-
-.chart {
-  background: #fff;
-  border-radius: 8px;
+.mod-stats-container {
   padding: 1rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  text-align: center;
+  font-family: 'Segoe UI', sans-serif;
 
   .title {
     font-size: 1.5rem;
     font-weight: 600;
+    text-align: center;
     color: #333;
-    margin-bottom: 1rem;
+  }
+
+  .charts-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+    justify-items: center;
+
+    .chart {
+      background: #fff;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      width: 320px;
+      text-align: center;
+
+      .chart-header {
+        margin-bottom: 1rem;
+
+        h3 {
+          font-size: 1.2rem;
+          color: #007acc;
+        }
+      }
+
+      canvas {
+        max-width: 100%;
+        height: auto;
+      }
+
+      .stats-summary {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 1rem;
+
+        .stat-item {
+          text-align: left;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+
+          p {
+            font-size: 1.1rem;
+            color: #222;
+            margin: 0;
+          }
+
+          strong {
+            color: #007acc;
+          }
+        }
+      }
+    }
   }
 }
