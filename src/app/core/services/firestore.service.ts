@@ -8,6 +8,7 @@ import { saveAs } from 'file-saver';
 // Definición de la interfaz para los datos del excell
 export interface FormularioData {
   id: string;
+  user_id: string;
   rest_level: number;
   sleep_time: string;
   wake_up_time: string;
@@ -24,6 +25,7 @@ export interface FormularioData {
   apathyLevel: number;
   country: string;
   state: string;
+  date: string 
 }
 
 @Injectable({
@@ -353,6 +355,8 @@ export class FirestoreService {
     collectionData(ref, { idField: 'id' }).subscribe((formularios: any[]) => {
       const exportData: FormularioData[] = formularios.map((form: any) => ({
         id: form.id,
+        user_id: form.id_user,
+        date:  form.recorded_at ? new Date(form.recorded_at.seconds * 1000).toISOString() : '',
         rest_level: form.rest_level || 0,
         sleep_time: form.sleep_time ? new Date(form.sleep_time.seconds * 1000).toISOString() : '',
         wake_up_time: form.wake_up_time ? new Date(form.wake_up_time.seconds * 1000).toISOString() : '',
