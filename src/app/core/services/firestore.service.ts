@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Firestore, collection, collectionData } from '@angular/fire/firestore';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
@@ -117,9 +117,9 @@ export class FirestoreService {
 
   ////// OBTENER DATOS DE LA BASE DE DATOS //////
   // Obtener datos de los uuarios de la base de datos
-  public loadUserCollection(): void {
+  public loadUserCollection(): Observable<void> {
     const ref = collection(this.firestore, 'users');
-    collectionData(ref, { idField: 'id' })
+    return collectionData(ref, { idField: 'id' })
       .pipe(
         map(users => {
           const total = users.length;
@@ -128,8 +128,7 @@ export class FirestoreService {
           this.totalUsersSubject.next(total);
           this.usersWithDeviceIdSubject.next(withDevice);
         })
-      )
-      .subscribe();
+      );
   }
 
   // Obtener datos de los formularios de la base de datos 
