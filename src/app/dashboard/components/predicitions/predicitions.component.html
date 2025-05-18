@@ -1,19 +1,44 @@
-<!-- Linear Regression Avg -->
-<p *ngIf="linearRegressionAvg">
-    MSE: {{ linearRegressionAvg.mse }}, R²: {{ linearRegressionAvg.r2 }}
-</p>
+<div class="mod-stats-container" *ngIf="isBrowser"> 
+  <div class="charts-container">
+    <div class="chart">
+      <div class="chart-header">
+        <h3>Distribución de Ansiedad Predicha</h3>
+      </div>
 
-<!-- Average Anxiety -->
-<p *ngIf="averageAnxiety">
-    Average Anxiety: {{ averageAnxiety }}
-</p>
+      <canvas baseChart
+              [data]="predictionChartData"
+              [options]="predictionChartOptions"
+              [type]="'line'">
+      </canvas>
 
-<!-- Prediction History -->
-<div *ngIf="predictionHistory && predictionHistory.length">
-    <h3>Prediction History</h3>
-    <ul>
-        <li *ngFor="let item of predictionHistory">
-            Date: {{ item.date | date:'short' }}, Prediction: {{ item.prediction }}
-        </li>
-    </ul>
+      <div class="stats-summary first-row">
+         <div class="stat-item">
+          <strong>Predicciones realizadas</strong>
+          <p>{{ totalPredicitions }}</p>
+        </div>
+
+        <div class="stat-item">
+          <strong>Promedio Ansiedad</strong>
+          <p>{{ averageAnxiety | number:'1.2-2' }}</p>
+        </div>
+
+        <div class="stat-item">
+          <strong>Ataques de ansiedad predichos</strong>
+          <p>{{ totalAnxietyPredicitionsDetected }}</p>
+        </div>
+      </div>
+
+      <div class="stats-summary second-row">
+        <div class="stat-item">
+          <strong>Error de Predicción Promedio</strong>
+          <p>{{ linearRegressionAvg?.mse | number:'1.4-4' }}</p>
+        </div>
+
+        <div class="stat-item">
+          <strong>Precisión del Modelo (R²)</strong>
+          <p>{{ linearRegressionAvg?.r2 | number:'1.4-4' }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

@@ -25,7 +25,7 @@ export interface FormularioData {
   apathyLevel: number;
   country: string;
   state: string;
-  date: string 
+  date: string
 }
 
 @Injectable({
@@ -114,13 +114,13 @@ export class FirestoreService {
   private numberPredictionsSubject = new BehaviorSubject<number>(0);
   private numberHighAnxietyPredictionsSubject = new BehaviorSubject<number>(0);
   private averageAnxietySubject = new BehaviorSubject<number>(0);
-  private predictionHistorySubject = new BehaviorSubject<{ timestamp: any, value: number }[]>([]);
   private linearRegressionAvgSubject = new BehaviorSubject<{ mse: number, r2: number } | null>(null);
+  private predictionDistributionSubject = new BehaviorSubject<number[]>(new Array(11).fill(0));
   linearRegressionAvg$ = this.linearRegressionAvgSubject.asObservable();
   numberPredictions$ = this.numberPredictionsSubject.asObservable();
   numberHighAnxietyPredictions$ = this.numberHighAnxietyPredictionsSubject.asObservable();
   averageAnxiety$ = this.averageAnxietySubject.asObservable();
-  predictionHistory$ = this.predictionHistorySubject.asObservable();
+  predictionDistribution$ = this.predictionDistributionSubject.asObservable();
 
   // Biometric data
   //
@@ -337,42 +337,33 @@ export class FirestoreService {
   // Obtener datos de las predicciones realizadas
   public loadModelPredictions(): Observable<void> {
     const ref = collection(this.firestore, 'model_predictions');
-    return collectionData(ref, { idField: 'id_user' })
-      .pipe(
-        map((predictions: any[]) => {
-          const total = predictions.length;
-          this.numberPredictionsSubject.next(total);
+    return collectionData(ref, { idField: 'id_user' }).pipe(
+      map((predictions: any[]) => {
+        const distribution = new Array(11).fill(0);
+        let sumAnxiety = 0;
+        let countHighAnxiety = 0;
 
-          // Calcular la media de ansiedad predicha
-          let sumAnxiety = 0;
-          const history: { timestamp: any, value: number }[] = [];
+        predictions.forEach(pred => {
+          const value = Math.round(pred['predicted_maxAnxietyLevel']) || 0;
+          if (value >= 0 && value <= 10) {
+            distribution[value]++;
+          }
+          sumAnxiety += value;
 
-          // Contar instancias con predicted_maxAnxietyLevel > 6
-          let countHighAnxiety = 0;
+          if (pred['predicted_maxAnxietyLevel'] > 6) {
+            countHighAnxiety++;
+          }
+        });
 
-          predictions.forEach(pred => {
-            const value = pred['predicted_anxiety'] || 0;
-            sumAnxiety += value;
+        const total = predictions.length;
+        const avgAnxiety = total > 0 ? sumAnxiety / total : 0;
 
-            // Suponiendo que hay un campo timestamp o recorded_at
-            let timestamp = pred['timestamp'] || pred['recorded_at'] || null;
-            if (timestamp && timestamp.seconds) {
-              timestamp = new Date(timestamp.seconds * 1000);
-            }
-            history.push({ timestamp, value });
-
-            // Contar predicted_maxAnxietyLevel > 6
-            if (pred['predicted_maxAnxietyLevel'] !== undefined && pred['predicted_maxAnxietyLevel'] > 6) {
-              countHighAnxiety++;
-            }
-          });
-
-          const avgAnxiety = total > 0 ? sumAnxiety / total : 0;
-          this.averageAnxietySubject.next(avgAnxiety);
-          this.predictionHistorySubject.next(history);
-          this.numberHighAnxietyPredictionsSubject.next(countHighAnxiety);
-        })
-      );
+        this.predictionDistributionSubject.next(distribution);
+        this.averageAnxietySubject.next(avgAnxiety);
+        this.numberPredictionsSubject.next(total);
+        this.numberHighAnxietyPredictionsSubject.next(countHighAnxiety);
+      })
+    );
   }
 
   public loadTrainingStatistics(): void {
@@ -439,7 +430,7 @@ export class FirestoreService {
       const exportData: FormularioData[] = formularios.map((form: any) => ({
         id: form.id,
         user_id: form.id_user,
-        date:  form.recorded_at ? new Date(form.recorded_at.seconds * 1000).toISOString() : '',
+        date: form.recorded_at ? new Date(form.recorded_at.seconds * 1000).toISOString() : '',
         rest_level: form.rest_level || 0,
         sleep_time: form.sleep_time ? new Date(form.sleep_time.seconds * 1000).toISOString() : '',
         wake_up_time: form.wake_up_time ? new Date(form.wake_up_time.seconds * 1000).toISOString() : '',

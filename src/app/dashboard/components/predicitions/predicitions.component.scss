@@ -1,0 +1,62 @@
+.mod-stats-container {
+  font-family: 'Segoe UI', sans-serif;
+
+  .charts-container {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+
+    .chart {
+      background: #fff;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      width: 320px;
+      text-align: center;
+
+      .chart-header {
+        margin-bottom: 1rem;
+
+        h3 {
+          font-size: 1.2rem;
+          color: #007acc;
+        }
+      }
+
+      .stats-summary {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 1rem;
+
+        &.first-row {
+          justify-content: space-around;
+        }
+
+        &.second-row {
+          justify-content: space-evenly;
+        }
+
+        .stat-item {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          flex: 1; 
+          margin: 1px 8px;
+
+          p {
+            font-size: 1.1rem;
+            color: #222;
+            margin: 0;
+            text-align: center;
+          }
+
+          strong {
+            color: #007acc;
+          }
+        }
+      }
+    }
+  }
+}
