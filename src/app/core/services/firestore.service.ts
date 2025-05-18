@@ -415,8 +415,15 @@ export class FirestoreService {
 
   // Procesar datos de localización
   private processLocationData(form: any) {
-    const country = form['country'] || null;
-    const state = form['state'] || null;
+    let country = form['country'] || null;
+    let state = form['state'] || null;
+
+    if (country === 'Spain') {
+      country = 'España';
+    }
+    if (state === 'Community of Madrid') {
+      state = 'Comunidad de Madrid';
+    }
 
     return { country, state };
   }

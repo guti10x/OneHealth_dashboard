@@ -11,7 +11,8 @@
   .charts-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1rem;
+    row-gap: 1rem;
+    column-gap: 4rem;
     justify-items: center;  
   
     .chart {
@@ -45,12 +46,21 @@
             font-size: 1.1rem;
             color: #222;
             margin: 0;
+            margin-top: 0.55rem;;
           }
           strong {
             color: #007acc;
           }
         }
       }
+    }
+
+    /* Último chart ocupa dos columnas y queda centrado */
+    .chart:last-child {
+      grid-column: span 2;
+      justify-self: center;
+      width: auto;
+      max-width: 700px;
     }
   }
 }

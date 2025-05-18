@@ -44,8 +44,22 @@
 
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); /* más ancho mínimo */
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 2fr));
+  row-gap: 1rem;
+  column-gap: 2rem;
   margin-top: 2rem;
   align-items: start; 
+}
+
+/* Media query para pantallas menores a 2225px */
+@media (max-width: 2224px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dashboard-grid > :nth-last-child(1):nth-child(odd) {
+    grid-column: span 2;
+    justify-self: center;
+    max-width: 100%;
+  }
 }

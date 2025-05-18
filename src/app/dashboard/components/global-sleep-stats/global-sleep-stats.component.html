@@ -1,3 +1,4 @@
+<app-predicitions></app-predicitions>
 <div class="mod-stats-container">
   <!--h2 class="title">Estadísticas Globales de Sueño</h2-->
 
@@ -62,7 +63,7 @@
       <div class="stats-summary">
         <div class="stat-item">
           <strong>Promedio</strong>
-          <p>{{ averageRestLevel ?? 'N/A' }}</p>
+            <p>{{ averageRestLevel !== undefined ? (averageRestLevel | number:'1.0-2') : 'N/A' }}</p>
         </div>
         <div class="stat-item">
           <strong>Duración promedia del sueño</strong>
