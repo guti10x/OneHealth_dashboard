@@ -1,1 +1,19 @@
-<p>predicitions works!</p>
+<!-- Linear Regression Avg -->
+<p *ngIf="linearRegressionAvg">
+    MSE: {{ linearRegressionAvg.mse }}, R²: {{ linearRegressionAvg.r2 }}
+</p>
+
+<!-- Average Anxiety -->
+<p *ngIf="averageAnxiety">
+    Average Anxiety: {{ averageAnxiety }}
+</p>
+
+<!-- Prediction History -->
+<div *ngIf="predictionHistory && predictionHistory.length">
+    <h3>Prediction History</h3>
+    <ul>
+        <li *ngFor="let item of predictionHistory">
+            Date: {{ item.date | date:'short' }}, Prediction: {{ item.prediction }}
+        </li>
+    </ul>
+</div>

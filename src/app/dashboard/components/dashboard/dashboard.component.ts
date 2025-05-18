@@ -41,6 +41,7 @@ export class DashboardComponent implements  OnInit {
     this.firestoreService.loadModelPredictions().subscribe((res: any) => {
       console.log('Servicio llamado después de cargar la página Predicition Collection:', res);
     });
+    this.firestoreService.loadTrainingStatistics();
   }
 
   downloadExcel() {

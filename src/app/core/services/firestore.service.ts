@@ -115,11 +115,13 @@ export class FirestoreService {
   private numberHighAnxietyPredictionsSubject = new BehaviorSubject<number>(0);
   private averageAnxietySubject = new BehaviorSubject<number>(0);
   private predictionHistorySubject = new BehaviorSubject<{ timestamp: any, value: number }[]>([]);
+  private linearRegressionAvgSubject = new BehaviorSubject<{ mse: number, r2: number } | null>(null);
+  linearRegressionAvg$ = this.linearRegressionAvgSubject.asObservable();
   numberPredictions$ = this.numberPredictionsSubject.asObservable();
   numberHighAnxietyPredictions$ = this.numberHighAnxietyPredictionsSubject.asObservable();
   averageAnxiety$ = this.averageAnxietySubject.asObservable();
   predictionHistory$ = this.predictionHistorySubject.asObservable();
-    
+
   // Biometric data
   //
 
@@ -373,7 +375,39 @@ export class FirestoreService {
       );
   }
 
-  
+  public loadTrainingStatistics(): void {
+    const ref = collection(this.firestore, 'models_stats');
+    collectionData(ref).subscribe((docs: any[]) => {
+      if (!docs.length) {
+        this.linearRegressionAvgSubject.next(null);
+        return;
+      }
+
+      let sumaMSE = 0;
+      let sumaR2 = 0;
+      let count = 0;
+
+      docs.forEach(doc => {
+        const linear = doc['Linear Regression'];
+        if (linear && typeof linear.MSE === 'number' && typeof linear.R2 === 'number') {
+          sumaMSE += linear.MSE;
+          sumaR2 += linear.R2;
+          count++;
+        }
+      });
+
+      if (count > 0) {
+        this.linearRegressionAvgSubject.next({
+          mse: sumaMSE / count,
+          r2: sumaR2 / count
+        });
+      } else {
+        this.linearRegressionAvgSubject.next(null);
+      }
+    });
+  }
+
+
   ///// FUNCIONES AUXILIARES //////
   // Procesar datos de sueño y localización
   private processSleepData(form: any) {
