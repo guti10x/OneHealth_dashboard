@@ -111,7 +111,15 @@ export class FirestoreService {
   states$ = this.statesSubject.asObservable();
 
   // Predictions
-  //
+  private numberPredictionsSubject = new BehaviorSubject<number>(0);
+  private numberHighAnxietyPredictionsSubject = new BehaviorSubject<number>(0);
+  private averageAnxietySubject = new BehaviorSubject<number>(0);
+  private predictionHistorySubject = new BehaviorSubject<{ timestamp: any, value: number }[]>([]);
+  numberPredictions$ = this.numberPredictionsSubject.asObservable();
+  numberHighAnxietyPredictions$ = this.numberHighAnxietyPredictionsSubject.asObservable();
+  averageAnxiety$ = this.averageAnxietySubject.asObservable();
+  predictionHistory$ = this.predictionHistorySubject.asObservable();
+    
   // Biometric data
   //
 
@@ -324,6 +332,48 @@ export class FirestoreService {
     });
   }
 
+  // Obtener datos de las predicciones realizadas
+  public loadModelPredictions(): Observable<void> {
+    const ref = collection(this.firestore, 'model_predictions');
+    return collectionData(ref, { idField: 'id_user' })
+      .pipe(
+        map((predictions: any[]) => {
+          const total = predictions.length;
+          this.numberPredictionsSubject.next(total);
+
+          // Calcular la media de ansiedad predicha
+          let sumAnxiety = 0;
+          const history: { timestamp: any, value: number }[] = [];
+
+          // Contar instancias con predicted_maxAnxietyLevel > 6
+          let countHighAnxiety = 0;
+
+          predictions.forEach(pred => {
+            const value = pred['predicted_anxiety'] || 0;
+            sumAnxiety += value;
+
+            // Suponiendo que hay un campo timestamp o recorded_at
+            let timestamp = pred['timestamp'] || pred['recorded_at'] || null;
+            if (timestamp && timestamp.seconds) {
+              timestamp = new Date(timestamp.seconds * 1000);
+            }
+            history.push({ timestamp, value });
+
+            // Contar predicted_maxAnxietyLevel > 6
+            if (pred['predicted_maxAnxietyLevel'] !== undefined && pred['predicted_maxAnxietyLevel'] > 6) {
+              countHighAnxiety++;
+            }
+          });
+
+          const avgAnxiety = total > 0 ? sumAnxiety / total : 0;
+          this.averageAnxietySubject.next(avgAnxiety);
+          this.predictionHistorySubject.next(history);
+          this.numberHighAnxietyPredictionsSubject.next(countHighAnxiety);
+        })
+      );
+  }
+
+  
   ///// FUNCIONES AUXILIARES //////
   // Procesar datos de sueño y localización
   private processSleepData(form: any) {

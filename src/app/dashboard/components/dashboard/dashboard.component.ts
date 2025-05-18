@@ -35,9 +35,12 @@ export class DashboardComponent implements  OnInit {
 
   llamarServicio() {
     this.firestoreService.loadUserCollection().subscribe((res: any) => {
-      console.log('Servicio llamado después de cargar la página:', res);
+      console.log('Servicio llamado después de cargar la página User collection:', res);
     });
     this.firestoreService.loadFormulariosCollection();
+    this.firestoreService.loadModelPredictions().subscribe((res: any) => {
+      console.log('Servicio llamado después de cargar la página Predicition Collection:', res);
+    });
   }
 
   downloadExcel() {

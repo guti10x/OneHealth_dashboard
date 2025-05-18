@@ -28,5 +28,13 @@ export class HeaderCardsComponent {
     this.firestoreService.totalFormsRecords$.subscribe(records => {
        this.totalRecords = records;
     });
+
+    this.firestoreService.numberPredictions$.subscribe(predictions => {
+      this.totalPredicitions = predictions;
+    });
+
+    this.firestoreService.numberHighAnxietyPredictions$.subscribe(predictions => {
+      this.totalAnxietyPredicitionsDetected = predictions;
+    });
   }
 }

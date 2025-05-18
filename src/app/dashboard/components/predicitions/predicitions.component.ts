@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { FirestoreService } from '../../../core/services/firestore.service';
 
 @Component({
   selector: 'app-predicitions',
@@ -6,6 +7,11 @@ import { Component } from '@angular/core';
   templateUrl: './predicitions.component.html',
   styleUrl: './predicitions.component.scss'
 })
-export class PredicitionsComponent {
+export class PredicitionsComponent implements OnInit {
 
+  constructor(private firestoreService: FirestoreService) { }
+
+  ngOnInit() {
+    
+  }
 }
