@@ -20,11 +20,4 @@ Web disponible en el siguiente enlace: [OneHealth Dashboard](https://onehealth-d
 - Monitoreo y detección de patrones y tendencias para análisis y formulación de hipótesis.
 
 ## Arquitectura del sistema
-![Copia de codeviz-diagram-ddddddddd-05-13T22-13-26 drawio](https://github.com/user-attachments/assets/522d24a8-355b-406b-93e7-a2b3328c4f70)
-
-
-
-## Desarrollo local
-
-Para levantar un servidor local de desarrollo:
-
+![Codeviz-diagram-05-13T22-13-26 drawio](https://github.com/user-attachments/assets/2dd35f1b-2871-4d06-ac9b-8c4471ecc92d)
