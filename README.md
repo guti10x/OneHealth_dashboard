@@ -1,59 +1,30 @@
 # OneHealthDashware
+Plataforma de visualización orientada al monitoreo de los diferentes datos recopilados mediante la aplicación de recogida de información, dentro del ecosistema y estudio desarrollado dentro de la iniciativa OneHealth. 
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.5.
+Desarrollada con Angular, esta herramienta muestra de forma clara e interactiva los difenretes datos obtenidos de los usuarios, incluyendo métricas biométricas, patrones de uso del móvil, estados emocionales, niveles de ansiedad y calidad del descanso. A través de este dashboard, administradores, analistas y profesionales de la salud pueden explorar visualmente la información, identificar patrones, realizar seguimientos individualizados y formular hipótesis sobre el bienestar psicológico y fisiológico. Su finalidad es facilitar el análisis de las crisis de ansiedad y su relación con variables personales y de comportamiento, contribuyendo así a la investigación, prevención y atención en salud mental.
 
-## Development server
+![OneHealthDashware-05-18-2025_06_17_PM](https://github.com/user-attachments/assets/2adc0d35-eb67-4bc1-bd8d-a33fbbbc530c)
 
-To start a local development server, run:
+## Acceso a la web desplegada:
 
-```bash
-ng serve
-```
+Web disponible en el siguiente enlace: [OneHealth Dashboard](https://onehealth-dashboard-fzfu2vdz6-guti10x-s-projects.vercel.app/)
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Características principales
 
-## Code scaffolding
+- Visualización en tiempo real de métricas clave de salud mental y sueño.
+- Dashboard modular con gráficos interactivos y tablas dinámicas.
+- Gráficos de líneas, barras y distribuciones con NgChartsModule.
+- Exportación de datos en formato Excel para análisis externo.
+- Diseño responsive para una experiencia óptima en distintos dispositivos.
+- Gestión centralizada de usuarios y datos históricos.
+- Monitoreo y detección de patrones y tendencias para análisis y formulación de hipótesis.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Arquitectura del sistema
+![Copia de codeviz-diagram-ddddddddd-05-13T22-13-26 drawio](https://github.com/user-attachments/assets/522d24a8-355b-406b-93e7-a2b3328c4f70)
 
-```bash
-ng generate component component-name
-```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
 
-```bash
-ng generate --help
-```
+## Desarrollo local
 
-## Building
+Para levantar un servidor local de desarrollo:
 
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
